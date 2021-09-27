@@ -11,6 +11,31 @@ exports.getCategories = (req, res) => {
     .then((data) => res.send(data))
     .catch((err) => console.log(err));
 };
+exports.getBooksByCategory = (req, res) => {
+  let category = req.query.category;
+  // let arr = query.split("-").map((ele) => {
+  //   let temp = ele.toLowerCase();
+
+  //   return temp.charAt(0).toUpperCase() + temp.slice(1);
+  // });
+  // let category = arr.join(" ");
+  Book.find({ category })
+    .then((books) => {
+      if (books.length > 0) res.send(books);
+      else res.send({ error: "Books not found !" });
+    })
+    .catch(() => res.send({ error: "Books not found !" }));
+};
+exports.getBooksByAuthor = (req, res) => {
+  let author = req.query.author;
+
+  Book.find({ author })
+    .then((books) => {
+      if (books.length > 0) res.send(books);
+      else res.send({ error: "Books not found !" });
+    })
+    .catch(() => res.send({ error: "Books not found !" }));
+};
 exports.getSingleBook = (req, res) => {
   const id = req.query.bookId;
 
