@@ -5,7 +5,22 @@ exports.getAllBook = (req, res) => {
     .then((books) => res.send(books))
     .catch((err) => console.log(err));
 };
+exports.getCategories = (req, res) => {
+  Book.find()
+    .select("category author")
+    .then((data) => res.send(data))
+    .catch((err) => console.log(err));
+};
+exports.getSingleBook = (req, res) => {
+  const id = req.query.bookId;
 
+  Book.findById({ _id: id })
+    .then((book) => {
+      if (book.length === 0) res.send({ error: true });
+      else res.send(book);
+    })
+    .catch((err) => res.send({ error: true }));
+};
 exports.postAddBook = (req, res) => {
   const title = req.body.title;
   const author = req.body.author;
