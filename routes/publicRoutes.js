@@ -11,6 +11,8 @@ router.get("/author", controllers.getBooksByAuthor);
 router.get("/get-all-books", controllers.getAllBook);
 
 //POST
+router.post("/sign-up", controllers.postSignUp);
+router.post("/login", controllers.postLogin);
 router.post("/add-book", controllers.postAddBook);
 
 module.exports = router;

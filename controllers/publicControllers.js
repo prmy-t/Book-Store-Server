@@ -1,5 +1,6 @@
 const Book = require("../models/book");
-
+const User = require("../models/user");
+var jwt = require("jsonwebtoken");
 exports.getAllBook = (req, res) => {
   Book.find()
     .then((books) => res.send(books))
@@ -13,12 +14,6 @@ exports.getCategories = (req, res) => {
 };
 exports.getBooksByCategory = (req, res) => {
   let category = req.query.category;
-  // let arr = query.split("-").map((ele) => {
-  //   let temp = ele.toLowerCase();
-
-  //   return temp.charAt(0).toUpperCase() + temp.slice(1);
-  // });
-  // let category = arr.join(" ");
   Book.find({ category })
     .then((books) => {
       if (books.length > 0) res.send(books);
@@ -28,7 +23,6 @@ exports.getBooksByCategory = (req, res) => {
 };
 exports.getBooksByAuthor = (req, res) => {
   let author = req.query.author;
-
   Book.find({ author })
     .then((books) => {
       if (books.length > 0) res.send(books);
@@ -45,6 +39,38 @@ exports.getSingleBook = (req, res) => {
       else res.send(book);
     })
     .catch((err) => res.send({ error: true }));
+};
+
+//POST
+exports.postSignUp = (req, res) => {
+  const fname = req.body.fname;
+  const lname = req.body.lname;
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = new User({
+    fname,
+    lname,
+    email,
+    password,
+    cart: { items: [], totalQuantity: 0, totalPrice: 0 },
+  });
+  user
+    .save()
+    .then(() => res.send("created"))
+    .catch((err) => console.log(err));
+};
+exports.postLogin = (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({ email, password })
+    .then((user) => {
+      if (user) {
+        var token = jwt.sign(user.email, process.env.JWT_KEY);
+        res.send({ user, token });
+      } else res.send({ error: "none" });
+    })
+    .catch((err) => console.log(err));
 };
 exports.postAddBook = (req, res) => {
   const title = req.body.title;
