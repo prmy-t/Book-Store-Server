@@ -1,6 +1,7 @@
 const Book = require("../models/book");
 const User = require("../models/user");
 var jwt = require("jsonwebtoken");
+
 exports.getAllBook = (req, res) => {
   Book.find()
     .then((books) => res.send(books))
@@ -37,6 +38,15 @@ exports.getSingleBook = (req, res) => {
     .then((book) => {
       if (book.length === 0) res.send({ error: true });
       else res.send(book);
+    })
+    .catch((err) => res.send({ error: true }));
+};
+exports.getRefetchUser = (req, res) => {
+  const id = req.query.id;
+  User.findById({ _id: id })
+    .then((ele) => {
+      console.log(ele);
+      res.send(ele);
     })
     .catch((err) => res.send({ error: true }));
 };
@@ -89,3 +99,19 @@ exports.postAddBook = (req, res) => {
     .then(() => res.send("saved"))
     .catch((err) => console.log(err));
 };
+
+exports.postAddToCart = (req, res) => {
+  const cart = req.body.cart;
+  const id = req.body.id;
+
+  User.findByIdAndUpdate(
+    id,
+    { $set: { cart: cart } },
+    { new: true },
+    (err, user) => {
+      if (!err) res.send(user);
+      else console.log(err);
+    }
+  );
+};
+exports.postRemoveFromCart = (req, res) => {};
